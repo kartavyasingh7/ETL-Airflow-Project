@@ -1,0 +1,111 @@
+1. Project Overview
+The E-Commerce ETL Pipeline is an end-to-end solution designed to automate the extraction, transformation, and loading (ETL) of product and customer data into a scalable and efficient cloud-based architecture using Apache Airflow, AWS S3, and Python. This pipeline integrates raw data from multiple sources, processes it, and uploads the results to an AWS S3 bucket for further analysis and reporting.
+
+This project was built to meet the requirements of an enterprise-level data workflow, ensuring robustness, scalability, and automation of key data processing tasks for e-commerce companies.
+
+2. Key Technologies Used
+Apache Airflow: Orchestrator for automating workflows and data pipelines.
+
+AWS S3: Cloud storage for storing raw and processed data.
+
+Python: Programming language for data transformation and automation scripts.
+
+Pandas: Data manipulation and analysis library.
+
+Boto3: AWS SDK for Python, enabling interaction with AWS services.
+
+Faker: Python library to generate fake data for simulation and testing.
+
+3. Architecture and Design
+The architecture follows a modular and scalable design where each step in the ETL process is broken down into a distinct task. The tasks are orchestrated by Apache Airflow, which ensures that the pipeline is fully automated, monitored, and optimized for performance.
+
+Data Sources: Raw product, customer, and order data is stored in CSV format.
+
+Transformation: The data is processed using Python scripts that clean, merge, and compute additional metrics.
+
+Output: The final output data is uploaded to an AWS S3 bucket for storage and future analysis.
+
+Data Flow
+Data Extraction:
+
+Files are downloaded from an S3 bucket that holds raw CSV files.
+
+The boto3 SDK is used to interface with S3 and download the data.
+
+Data Transformation:
+
+Data is loaded into Pandas DataFrames.
+
+Merging operations are performed to join customer, product, and order data.
+
+Metrics such as total_price and shipping_time_days are calculated.
+
+Data Loading:
+
+The processed data is saved locally on the EC2 instance and then uploaded back to AWS S3 for further usage.
+
+4. Data Transformation Logic
+The core of the data transformation consists of:
+
+Merging Data: The customer, product, and order datasets are merged using customer and product IDs as keys.
+
+Calculating Metrics:
+
+total_price: Calculated as quantity * selling_price.
+
+shipping_time_days: Calculated as the difference between delivery_date and order_date.
+
+Final Data Selection: Only relevant columns are retained, including order_id, customer_id, total_price, shipping_time_days, etc.
+
+5. Automation with Apache Airflow
+Apache Airflow was chosen as the orchestrator for this pipeline due to its capabilities in managing complex workflows. The pipeline is fully automated and includes the following tasks:
+
+Download Raw Data: Fetches raw data files from AWS S3.
+
+Data Transformation: Executes the transformation logic written in Python.
+
+Upload Processed Data: Uploads the transformed data to an S3 bucket.
+
+Error Handling and Retries: Configured in Airflow to handle task failures and retries.
+
+Airflow DAG Configuration
+Scheduled Execution: The DAG is scheduled to run daily.
+
+Retry Logic: Each task has a retry mechanism with a delay of 5 minutes.
+
+Task Parallelism: The pipeline uses a Sequential Executor due to resource constraints, but it can scale to a Celery Executor for parallelism in a production environment.
+
+6. AWS Integration
+AWS S3: The pipeline interacts with S3 to download raw files and upload the processed results.
+
+IAM Roles: AWS IAM roles are configured with the necessary permissions to access the S3 bucket securely.
+
+7. Error Handling and Logging
+The pipeline ensures smooth execution by incorporating:
+
+Task-Level Logging: Each task logs critical information about its execution status (success or failure).
+
+Retry Logic: Tasks that fail are automatically retried up to a predefined number of attempts.
+
+Error Notifications: The Airflow system is configured to send notifications in case of failure to ensure issues are addressed promptly.
+
+8. Data Validation and Quality Assurance
+Data Integrity Checks: The data transformation script includes checks to ensure no missing or corrupted data in the final output.
+
+Unit Tests: Unit tests were written for key components of the transformation logic.
+
+Data Quality Reports: Generated daily and uploaded to the S3 bucket for review.
+
+9. Future Scalability and Improvements
+Distributed Execution: Moving from the Sequential Executor to the Celery Executor would enable parallel processing for faster data transformations.
+
+Handling Large Datasets: Integration with AWS Lambda or AWS Glue for scaling data transformations.
+
+Monitoring and Alerts: Implementation of CloudWatch monitoring and alerts for better observability of the pipeline in production.
+
+10. Conclusion
+This ETL pipeline integrates best practices in data engineering, utilizing industry-standard tools such as Apache Airflow, AWS S3, and Python. It ensures robust data processing, efficient transformations, and secure handling of raw and processed data.
+
+The pipeline has been successfully deployed on an AWS EC2 instance, enabling seamless automation and real-time monitoring, with potential for scalability as the data grows.
+
+This solution provides a production-grade ETL system that meets high industry standards in terms of reliability, scalability, and automation.
